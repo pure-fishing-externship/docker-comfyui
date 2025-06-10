@@ -31,6 +31,9 @@ COPY ./entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 # --- End of script configuration ---
 
+# Install additional Python dependencies for ComfyUI
+RUN python3.11 -m pip install opencv-python-headless
+
 # Expose the ComfyUI port
 EXPOSE 8188
 
