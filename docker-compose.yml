@@ -18,7 +18,8 @@ services:
               capabilities: [gpu]
               
     volumes:
-      - ./models:/app/models
-      - ./input:/app/input
-      - ./output:/app/output
-      - ./custom_nodes:/app/custom_nodes
+      - ./models:/app/ComfyUI/models
+      - ./input:/app/ComfyUI/input
+      - ./output:/app/ComfyUI/output
+      - ./custom-nodes:/app/ComfyUI/custom_nodes
+      - ./user:/app/ComfyUI/user

@@ -1,44 +1,42 @@
-# Dockerfile
-# This is the blueprint that builds your application environment from scratch.
+# Use an official NVIDIA CUDA base image
+FROM nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04
 
-# Start from an official NVIDIA base image with CUDA drivers.
-FROM nvidia/cuda:12.1.1-devel-ubuntu22.04
-
-# Set environment variables to prevent interactive pop-ups during the build.
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Etc/UTC
-
-# Install essential system tools like Python, pip (Python's installer), and Git.
-RUN apt-get update && apt-get install -y \
-    python3.10 \
-    python3-pip \
-    git \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set the working directory inside the container for all subsequent commands.
+# Set the working directory inside the container
 WORKDIR /app
 
-# --- Step 1: Clone the main ComfyUI application ---
-RUN git clone https://github.com/comfyanonymous/ComfyUI.git .
+# Prevent prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
 
-# --- Step 2: Clone your required custom nodes ---
-# This is where you add a line for each custom node you need.
-# The code will be placed inside the container at ./custom_nodes/
-RUN git clone https://github.com/Fannovel16/comfyui_controlnet_aux.git ./custom_nodes/comfyui_controlnet_aux && \
-    git clone https://github.com/cubiq/ComfyUI_IPAdapter_plus.git ./custom_nodes/ComfyUI_IPAdapter_plus && \
-    git clone https://github.com/Acly/comfyui-inpaint-nodes.git ./custom_nodes/comfyui-inpaint-nodes && \
-    git clone https://github.com/Acly/comfyui-tooling-nodes.git ./custom_nodes/comfyui-tooling-nodes
+# Prevent Python from writing .pyc files
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
+# Install Python, pip, git, and other essentials
+RUN apt-get update && apt-get install -y \
+    python3.11 \
+    python3-pip \
+    git \
+    wget \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# --- Step 3: Install all Python dependencies ---
-# This runs the slow pip install process. It will also install any requirements
-# from the custom nodes you cloned above.
-RUN pip3 install -r requirements.txt
+# Clone the main ComfyUI application
+RUN git clone https://github.com/comfyanonymous/ComfyUI.git
 
-# --- Step 4: Expose the port ---
-# Tell Docker that the application inside this container will listen on port 8188.
+# Install base Python dependencies from the main requirements file
+RUN python3.11 -m pip install --no-cache-dir -r ComfyUI/requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
+
+# --- Add and configure the startup script ---
+COPY ./entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+# --- End of script configuration ---
+
+# Expose the ComfyUI port
 EXPOSE 8188
 
-# --- Step 5: Set the default run command ---
-# This is the command that will execute when the container starts.
-CMD [ "python3", "main.py", "--listen", "--port", "8188" ]
+# Set the script as the entrypoint
+ENTRYPOINT ["/app/entrypoint.sh"]
+
+# Set the default command for the entrypoint script
+# These arguments will be passed to the script's "exec $@" line
+CMD ["python3.11", "ComfyUI/main.py", "--listen", "0.0.0.0", "--highvram", "--bf16-vae", "--pytorch-compile"]
