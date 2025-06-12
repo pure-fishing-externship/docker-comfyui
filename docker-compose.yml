@@ -2,7 +2,7 @@
 
 services:
   comfyui:
-    image: beat2319/comfyui:latest
+    image: docker.io/beat2319/comfyui:latest
     
     restart: unless-stopped
     
