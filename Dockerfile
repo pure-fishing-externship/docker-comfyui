@@ -33,6 +33,7 @@ RUN chmod +x /app/entrypoint.sh
 
 # Install additional Python dependencies for ComfyUI
 RUN python3.11 -m pip install opencv-python-headless
+RUN pip install matplotlib scikit-image
 
 # Expose the ComfyUI port
 EXPOSE 8188
