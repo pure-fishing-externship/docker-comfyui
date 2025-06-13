@@ -20,14 +20,14 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1 \
-    && update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
+# Set python3.11 as the default for `python3`
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
 
 # Clone the main ComfyUI application
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git
 
 # Install base Python dependencies from the main requirements file
-RUN python3.11 -m pip install --no-cache-dir -r ComfyUI/requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
+RUN python3 -m pip install --no-cache-dir -r ComfyUI/requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
 
 # --- Add and configure the startup script ---
 COPY ./entrypoint.sh /app/entrypoint.sh
@@ -35,8 +35,7 @@ RUN chmod +x /app/entrypoint.sh
 # --- End of script configuration ---
 
 # Install additional Python dependencies for ComfyUI
-RUN python3.11 -m pip install opencv-python-headless matplotlib scikit-image
-
+RUN python3 -m pip install opencv-python-headless matplotlib scikit-image piexif
 
 # Expose the ComfyUI port
 EXPOSE 8188
@@ -46,4 +45,4 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Set the default command for the entrypoint script
 # These arguments will be passed to the script's "exec $@" line
-CMD ["python3.11", "ComfyUI/main.py", "--listen", "0.0.0.0", "--highvram", "--bf16-vae", "--pytorch-compile"]
+CMD ["python3", "ComfyUI/main.py", "--listen", "0.0.0.0", "--highvram", "--bf16-vae", "--pytorch-compile"]
