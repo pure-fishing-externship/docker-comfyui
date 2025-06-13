@@ -45,4 +45,4 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Set the default command for the entrypoint script
 # These arguments will be passed to the script's "exec $@" line
-CMD ["python3", "ComfyUI/main.py", "--listen", "0.0.0.0", "--highvram", "--bf16-vae", "--pytorch-compile"]
+CMD ["python3", "ComfyUI/main.py", "--listen", "0.0.0.0", "--highvram", "--bf16-vae"]
