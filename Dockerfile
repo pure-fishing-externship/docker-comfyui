@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     git \
     wget \
     build-essential \
+    libgl1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Set python3.11 as the default for `python3`
