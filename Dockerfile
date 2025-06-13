@@ -20,6 +20,9 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1 \
+    && update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
+
 # Clone the main ComfyUI application
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git
 

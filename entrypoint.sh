@@ -9,7 +9,8 @@ set -e
 echo "Checking for custom node requirements..."
 find /app/ComfyUI/custom_nodes -maxdepth 2 -name "requirements.txt" | while read reqs; do
     echo "Installing requirements from $reqs"
-    pip install --no-cache-dir -r "$reqs"
+    # CORRECTED LINE: Explicitly use the python3.11 pip module
+    python3.11 -m pip install --no-cache-dir -r "$reqs"
 done
 
 # Now, execute the command passed to this script (the Dockerfile's CMD)
