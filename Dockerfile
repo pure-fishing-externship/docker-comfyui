@@ -26,7 +26,9 @@ RUN apt-get update && apt-get install -y \
 RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
 
 # Clone the main ComfyUI application
-RUN git clone https://github.com/comfyanonymous/ComfyUI.git
+RUN git clone --depth 1 https://github.com/comfyanonymous/ComfyUI.git && \
+    cd ComfyUI && \
+    git pull
 
 # Install base Python dependencies from the main requirements file
 RUN python3 -m pip install --no-cache-dir -r ComfyUI/requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
