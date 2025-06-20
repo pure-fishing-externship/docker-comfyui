@@ -30,6 +30,9 @@ RUN git clone --depth 1 https://github.com/comfyanonymous/ComfyUI.git && \
     cd ComfyUI && \
     git pull
 
+# Create a directory for custom nodes
+RUN git clone https://github.com/ltdrdata/ComfyUI-Manager.git /app/ComfyUI/custom_nodes/ComfyUI-Manager
+
 # Install base Python dependencies from the main requirements file
 RUN python3 -m pip install --no-cache-dir -r ComfyUI/requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
 
